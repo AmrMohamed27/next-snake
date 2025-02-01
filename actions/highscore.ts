@@ -1,4 +1,3 @@
-// TODO: Fix Current User
 import {
   collection,
   addDoc,
@@ -10,7 +9,7 @@ import {
   doc,
   setDoc,
 } from "firebase/firestore";
-import { db, user } from "../firebase";
+import { db } from "../firebase";
 import { ScoreDocument } from "@/types";
 
 export const saveHighScore = async (userId: string, score: number) => {
