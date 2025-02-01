@@ -1,4 +1,8 @@
 "use client";
+//TODO: Nintendo-Style graphics
+// TODO: Add difficulty levels
+// TODO: Add sound effects
+
 import {
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
@@ -129,7 +133,7 @@ const GameCanvas = () => {
             x: prevHead.x + direction.x,
             y: prevHead.y + direction.y,
           };
-          //   Check if the snake has collided with itself or the walls
+          //   Check if the snake has collided with the walls
           if (
             newHead.x < 0 ||
             newHead.x >= CANVAS_WIDTH ||
@@ -140,6 +144,7 @@ const GameCanvas = () => {
             return prevSnake;
           }
           const newSnake: SnakeState[] = [newHead, ...prevSnake];
+          // Check if the snake has collided with itself
           if (detectSelfCollision(newSnake)) {
             setGameOver(true);
             return prevSnake;
@@ -244,7 +249,7 @@ const GameCanvas = () => {
 
   return (
     <div className="flex flex-col items-center justify-center gap-8">
-      <canvas ref={canvasRef} className="border border-gray-700">
+      <canvas ref={canvasRef} className="border border-theme-yellow">
         {canvasFallbackText}
       </canvas>
       <div className="flex flex-row gap-4 items-center">

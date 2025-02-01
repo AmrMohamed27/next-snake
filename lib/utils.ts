@@ -35,3 +35,13 @@ export function detectSelfCollision(snake: SnakeState[]): boolean {
   }
   return false;
 }
+
+export function formatDate(date: Date): string {
+  return date.toLocaleString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+  });
+}

@@ -10,12 +10,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { toSnakeCase } from "@/lib/utils";
+import { formatDate, toSnakeCase } from "@/lib/utils";
+import { leaderboardsCaption } from "@/constants";
 
 const HighscoresTable = ({ highScores }: { highScores: ScoreDocument[] }) => {
   return (
-    <Table className="text-lg">
-      <TableCaption>high_scores</TableCaption>
+    <Table className="text-lg w-full">
+      <TableCaption>{leaderboardsCaption}</TableCaption>
       <TableHeader>
         <TableRow>
           {Object.keys(highScores[0]).map((key) => (
@@ -33,7 +34,7 @@ const HighscoresTable = ({ highScores }: { highScores: ScoreDocument[] }) => {
           >
             <TableCell>{toSnakeCase(score.name)}</TableCell>
             <TableCell>{score.score}</TableCell>
-            <TableCell>{score.timestamp.toLocaleString()}</TableCell>
+            <TableCell>{formatDate(score.timestamp)}</TableCell>
           </TableRow>
         ))}
       </TableBody>
