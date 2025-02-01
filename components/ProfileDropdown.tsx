@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { User } from "firebase/auth";
 import { menuItems } from "@/constants";
+import { toSnakeCase } from "@/lib/utils";
 
 const ProfileDropdown = ({ user }: { user: User }) => {
   return (
@@ -29,7 +30,7 @@ const ProfileDropdown = ({ user }: { user: User }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel className="p-4">
-          {user.displayName}
+          {toSnakeCase(user.displayName)}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {menuItems.map((item) => (
@@ -40,7 +41,7 @@ const ProfileDropdown = ({ user }: { user: User }) => {
               onClick={item.onClick ? item.onClick : undefined}
             >
               <item.icon />
-              <span>{item.label}</span>
+              <span>{toSnakeCase(item.label)}</span>
             </Link>
           </DropdownMenuItem>
         ))}

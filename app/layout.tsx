@@ -3,6 +3,7 @@ import { Gugi } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/toaster";
 
 const gugi = Gugi({
   variable: "--font-gugi",
@@ -11,8 +12,8 @@ const gugi = Gugi({
 });
 
 export const metadata: Metadata = {
-  title: "Snake Game",
-  description: "A classic Snake game built with Next.js and Tailwind CSS",
+  title: "snake_game",
+  description: "A classic Snake game built with Next.js and Firebase",
 };
 
 export default function RootLayout({
@@ -25,6 +26,7 @@ export default function RootLayout({
       <body className={cn(gugi.className, "antialiased")}>
         <Header />
         {children}
+        <Toaster />
       </body>
     </html>
   );

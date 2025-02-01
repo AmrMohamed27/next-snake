@@ -7,3 +7,16 @@ export interface MenuItem {
   url?: string;
   onClick?: () => void;
 }
+
+export interface SnakeState {
+  x: number;
+  y: number;
+}
+
+export type Directions = "up" | "down" | "left" | "right" | "none";
+
+export interface ScoreDocument {
+  name: string;
+  score: number;
+  timestamp: Date;
+}

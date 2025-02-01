@@ -1,5 +1,11 @@
 import { initializeApp, FirebaseApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, Auth } from "firebase/auth";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  Auth,
+  User,
+  onAuthStateChanged,
+} from "firebase/auth";
 import { getFirestore, Firestore } from "firebase/firestore";
 import { setPersistence, browserSessionPersistence } from "firebase/auth";
 
@@ -23,9 +29,14 @@ auth.useDeviceLanguage();
 const provider: GoogleAuthProvider = new GoogleAuthProvider();
 const db: Firestore = getFirestore(app);
 
-setPersistence(auth, browserSessionPersistence)
-  .then(() => console.log("Session persistence enabled"))
-  .catch((error) => console.error("Persistence error:", error));
+setPersistence(auth, browserSessionPersistence).catch((error) =>
+  console.error("Persistence error:", error)
+);
+
+let user: User | null = null;
+onAuthStateChanged(auth, (currentUser) => {
+  user = currentUser;
+});
 
 // Export the services you need
-export { auth, provider, db };
+export { auth, provider, db, user };

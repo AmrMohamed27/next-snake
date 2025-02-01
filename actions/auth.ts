@@ -1,8 +1,4 @@
-import {
-  signInWithPopup,
-  signOut,
-  User,
-} from "firebase/auth";
+import { signInWithPopup, signOut, User } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 import { auth, provider, db } from "../firebase";
 
@@ -11,7 +7,6 @@ import { auth, provider, db } from "../firebase";
 export const signInWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, provider);
-    console.log("User signed in:", result.user);
     await saveUserToFirestore(result.user); // Save to Firestore
     return result.user;
   } catch (error) {
@@ -39,7 +34,6 @@ export const saveUserToFirestore = async (user: User | null): Promise<void> => {
       name: user.displayName,
       email: user.email,
       photoURL: user.photoURL,
-      highScore: 0,
     });
   } catch (error) {
     console.error("Error saving user:", error);
