@@ -1,5 +1,7 @@
 "use client";
+import Difficulty from "@/components/Difficulty";
 import GameCanvas from "@/components/GameCanvas";
+import Settings from "@/components/Settings";
 import { homeHeader, homeSubheader } from "@/constants";
 import { useAuth } from "@/hooks/use-auth";
 import { toSnakeCase } from "@/lib/utils";
@@ -13,7 +15,15 @@ export default function Home() {
         user?.displayName ?? "dear_visitor"
       )}!`}</h1>
       <h2>{homeSubheader}</h2>
-      <GameCanvas />
+      {/* Game Area */}
+      <div className="w-full main-padding-x flex flex-row items-start justify-between">
+        {/* Difficulty Levels */}
+        <Difficulty />
+        {/* Game Canvas */}
+        <GameCanvas />
+        {/* Settings */}
+        <Settings />
+      </div>
     </div>
   );
 }

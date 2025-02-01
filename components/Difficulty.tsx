@@ -1,0 +1,90 @@
+"use client";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import React, { useCallback, useEffect } from "react";
+import { Slider } from "@/components/ui/slider";
+import { cn } from "@/lib/utils";
+import { difficultiesTitle } from "@/constants";
+
+const Difficulty = () => {
+  // Get the current URL query parameters
+  const searchParams = useSearchParams();
+  //   Define router to navigate when a new difficulty level is selected
+  const router = useRouter();
+  //   Get the current pathname
+  const pathname = usePathname();
+  //   Function to create a query string with the new difficulty level, memoized in useCallback to avoid unnecessary re-renders
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      // Create a new URLSearchParams object with the passed name and value parameters
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(name, value);
+
+      return params.toString();
+    },
+    [searchParams]
+  );
+  //   Function to handle difficulty level change
+  const handleChangeDifficulty = useCallback(
+    (newValue: number[]) => {
+      // Check if newValue is empty
+      if (!newValue || newValue.length === 0) return;
+      // Create a new query string with the new difficulty level
+      const queryString = createQueryString(
+        "difficulty",
+        newValue[0].toString()
+      );
+      // Navigate to the new URL with the new difficulty level
+      router.push(`${pathname}?${queryString}`);
+    },
+    [createQueryString, pathname, router]
+  );
+  // Make sure the difficulty level is valid i.e. between 1 and 5
+  useEffect(() => {
+    // Check if the difficulty level is not in the URL query parameters
+    if (searchParams.has("difficulty")) {
+      // Check if the difficulty level is a valid number
+      if (isNaN(parseInt(searchParams.get("difficulty")!))) {
+        handleChangeDifficulty([1]);
+      }
+      // Check if the difficulty level is between 1 and 5
+      else if (
+        parseInt(searchParams.get("difficulty")!) > 5 ||
+        parseInt(searchParams.get("difficulty")!) < 1
+      ) {
+        handleChangeDifficulty([1]);
+      }
+    }
+    // If the difficulty level is not in the URL query parameters, set it to "1"
+    else {
+      handleChangeDifficulty([1]);
+    }
+  }, [handleChangeDifficulty, searchParams]);
+  //   Get the difficulty level from the URL query parameters, default to "1" if not found
+  const difficulty = searchParams.get("difficulty") ?? "1";
+  const numberDifficulty =
+    parseInt(difficulty) > 5 || parseInt(difficulty) < 1
+      ? 1
+      : parseInt(difficulty);
+
+  return (
+    <div className={cn("flex flex-col items-center justify-center h-[400px]")}>
+      <Slider
+        defaultValue={[numberDifficulty]}
+        min={1}
+        max={5}
+        step={1}
+        onValueChange={handleChangeDifficulty}
+        onKeyDown={(e) => {
+          if (
+            ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)
+          ) {
+            e.preventDefault(); // ✅ Prevents arrow keys from affecting the slider
+          }
+        }}
+      />
+      <span className="text-sm mt-8">{difficultiesTitle}</span>
+    </div>
+  );
+};
+
+export default Difficulty;

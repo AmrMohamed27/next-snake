@@ -21,12 +21,15 @@ import { Button } from "./ui/button";
 import { saveHighScore } from "@/actions/highscore";
 import { useAuth } from "@/hooks/use-auth";
 // import { useToast } from "@/hooks/use-toast";
+import { useSearchParams } from "next/navigation";
 
 const GameCanvas = () => {
   // current user
   const user = useAuth();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const gridSize = 20; // Snake moves in 20x20 grid cells
+  // Get the current URL query parameters
+  const searchParams = useSearchParams();
 
   // Initial snake state, memoized to avoid unnecessary re-renders
   const initialSnake = useMemo(
@@ -45,17 +48,45 @@ const GameCanvas = () => {
   });
 
   //   Game state
+  const [isPaused, setIsPaused] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState<number>(0);
   // Food state
   const [food, setFood] = useState<SnakeState | null>(null);
+  // Difficulty level
+  const [difficultyLevel, setDifficultyLevel] = useState<number>(100);
+  //   Handle difficulty level change
+  useEffect(() => {
+    //   Get the initial difficulty level from the URL query parameters, default to "1" if not found
+    const initialDifficulty = searchParams.get("difficulty") ?? "1";
+    switch (initialDifficulty) {
+      case "1":
+        setDifficultyLevel(100);
+        break;
+      case "2":
+        setDifficultyLevel(70);
+        break;
+      case "3":
+        setDifficultyLevel(50);
+        break;
+      case "4":
+        setDifficultyLevel(40);
+        break;
+      case "5":
+        setDifficultyLevel(30);
+        break;
+      default:
+        setDifficultyLevel(100);
+    }
+  }, [searchParams]);
   // Toast
   // const { toast } = useToast();
   //   Start the game, function is wrapped in useCallback to prevent unnecessary re-renders in the useEffect hook that handles key presses
   const handleStartGame = useCallback(() => {
     setGameOver(false);
     setIsRunning(true);
+    setIsPaused(false);
     setFood(
       generateRandomSquare(CANVAS_WIDTH - gridSize, CANVAS_HEIGHT - gridSize)
     );
@@ -64,13 +95,14 @@ const GameCanvas = () => {
   }, [initialSnake]);
   //   Pause the game
   const handlePauseGame = () => {
-    setIsRunning((prev) => !prev);
+    setIsPaused((prev) => !prev);
   };
 
   //   Reset the game
   const handleResetGame = () => {
     setGameOver(true);
     setIsRunning(false);
+    setIsPaused(false);
     setFood(null);
     setSnake(initialSnake);
     setDirection({ x: 0, y: 0 });
@@ -203,7 +235,7 @@ const GameCanvas = () => {
 
   //   Move the snake
   useEffect(() => {
-    if (!gameOver && isRunning) {
+    if (!gameOver && isRunning && !isPaused) {
       const interval = setInterval(() => {
         setSnake((prevSnake) => {
           const prevHead = prevSnake[0];
@@ -229,10 +261,10 @@ const GameCanvas = () => {
           }
           return newSnake;
         });
-      }, 50);
+      }, difficultyLevel);
       return () => clearInterval(interval);
     }
-  }, [direction, gameOver, isRunning]);
+  }, [direction, gameOver, isRunning, isPaused, difficultyLevel]);
 
   // Handle game over
   useEffect(() => {

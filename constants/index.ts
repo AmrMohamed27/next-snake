@@ -38,3 +38,6 @@ export const leaderboardsCaption = "top_10_high_scores";
 export const homeHeader = "welcome_to_snake_game";
 export const homeSubheader =
   "click_start_or_press_an_arrow_key_to_play_and_climb_the_leaderboards!";
+
+export const difficulties = ["insane", "very_hard", "hard", "medium", "easy"];
+export const difficultiesTitle = "difficulty";
