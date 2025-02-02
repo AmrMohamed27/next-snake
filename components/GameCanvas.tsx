@@ -7,6 +7,10 @@ import {
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
   canvasFallbackText,
+  eatingSrc,
+  gameOverSrc,
+  gameOverText,
+  gameStartSrc,
   pauseButtonText,
   resetButtonText,
   restartButtonText,
@@ -30,6 +34,16 @@ const GameCanvas = () => {
   const gridSize = 20; // Snake moves in 20x20 grid cells
   // Get the current URL query parameters
   const searchParams = useSearchParams();
+  // Audio files refs
+  const eatSound = useRef<HTMLAudioElement | null>(null);
+  const gameOverSound = useRef<HTMLAudioElement | null>(null);
+  const gameStartSound = useRef<HTMLAudioElement | null>(null);
+  // Load audio files
+  useEffect(() => {
+    eatSound.current = new Audio(eatingSrc);
+    gameOverSound.current = new Audio(gameOverSrc);
+    gameStartSound.current = new Audio(gameStartSrc);
+  }, []);
 
   // Initial snake state, memoized to avoid unnecessary re-renders
   const initialSnake = useMemo(
@@ -92,6 +106,8 @@ const GameCanvas = () => {
     );
     setSnake(initialSnake);
     setDirection({ x: -gridSize, y: 0 });
+    // Play game start sound
+    gameStartSound.current?.play();
   }, [initialSnake]);
   //   Pause the game
   const handlePauseGame = () => {
@@ -100,9 +116,9 @@ const GameCanvas = () => {
 
   //   Reset the game
   const handleResetGame = () => {
-    setGameOver(true);
-    setIsRunning(false);
-    setIsPaused(false);
+    if (!gameOver) setGameOver(true);
+    if (isRunning) setIsRunning(false);
+    if (isPaused) setIsPaused(false);
     setFood(null);
     setSnake(initialSnake);
     setDirection({ x: 0, y: 0 });
@@ -150,6 +166,8 @@ const GameCanvas = () => {
       if (
         snake.some((segment) => segment.x === food.x && segment.y === food.y)
       ) {
+        // Play eating sound
+        eatSound.current?.play();
         // Generate new food
         setFood(
           generateRandomSquare(
@@ -270,14 +288,15 @@ const GameCanvas = () => {
   useEffect(() => {
     const handleGameOver = async () => {
       if (user) {
-        console.log(user);
         await saveHighScore(user.uid, score);
       }
     };
     if (gameOver) {
       handleGameOver().catch((error) => console.error(error));
+      // Play game over sound
+      if (isRunning) gameOverSound.current?.play();
     }
-  }, [score, user, gameOver]);
+  }, [score, user, gameOver, isRunning]);
 
   return (
     <div className="flex flex-col items-center justify-center gap-8">
@@ -300,7 +319,7 @@ const GameCanvas = () => {
           disabled={gameOver}
           onClick={handlePauseGame}
         >
-          {isRunning || gameOver ? pauseButtonText : resumeButtonText}
+          {!isPaused ? pauseButtonText : resumeButtonText}
         </Button>
         <Button
           className="bg-theme-red hover:bg-theme-red/70 cursor-pointer text-white"
@@ -312,7 +331,7 @@ const GameCanvas = () => {
       {/* Game Over Message */}
       {gameOver && (
         <div className="flex flex-col items-center justify-center gap-4">
-          <p className="text-2xl font-bold">game_over</p>
+          <p className="text-2xl font-bold">{gameOverText}</p>
           <Button
             className="bg-theme-red hover:bg-theme-red/70 cursor-pointer text-white"
             onClick={() => {

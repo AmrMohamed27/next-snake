@@ -29,6 +29,7 @@ export const pauseButtonText = "pause";
 export const resumeButtonText = "resume";
 export const resetButtonText = "reset";
 export const restartButtonText = "restart";
+export const gameOverText = "game_over";
 export const scoreText = "score";
 export const canvasFallbackText = "This is the area where the game is played.";
 
@@ -41,3 +42,7 @@ export const homeSubheader =
 
 export const difficulties = ["insane", "very_hard", "hard", "medium", "easy"];
 export const difficultiesTitle = "difficulty";
+
+export const gameStartSrc = "media/game_start.mp3";
+export const gameOverSrc = "media/game_over.mp3";
+export const eatingSrc = "media/eating.mp3";

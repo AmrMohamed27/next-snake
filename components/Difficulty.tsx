@@ -74,11 +74,12 @@ const Difficulty = () => {
         max={5}
         step={1}
         onValueChange={handleChangeDifficulty}
+        // Prevent arrow keys from affecting the slider
         onKeyDown={(e) => {
           if (
             ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)
           ) {
-            e.preventDefault(); // ✅ Prevents arrow keys from affecting the slider
+            e.preventDefault();
           }
         }}
       />
