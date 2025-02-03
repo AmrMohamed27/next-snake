@@ -1,42 +1,22 @@
 "use client";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect } from "react";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import { difficultiesTitle } from "@/constants";
+import { useParams } from "@/hooks/use-params";
 
 const Difficulty = () => {
   // Get the current URL query parameters
-  const searchParams = useSearchParams();
-  //   Define router to navigate when a new difficulty level is selected
-  const router = useRouter();
-  //   Get the current pathname
-  const pathname = usePathname();
-  //   Function to create a query string with the new difficulty level, memoized in useCallback to avoid unnecessary re-renders
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      // Create a new URLSearchParams object with the passed name and value parameters
-      const params = new URLSearchParams(searchParams.toString());
-      params.set(name, value);
-
-      return params.toString();
-    },
-    [searchParams]
-  );
+  const { searchParams, handleChangeParam } = useParams();
   //   Function to handle difficulty level change
   const handleChangeDifficulty = useCallback(
     (newValue: number[]) => {
       // Check if newValue is empty
       if (!newValue || newValue.length === 0) return;
       // Create a new query string with the new difficulty level
-      const queryString = createQueryString(
-        "difficulty",
-        newValue[0].toString()
-      );
-      // Navigate to the new URL with the new difficulty level
-      router.push(`${pathname}?${queryString}`);
+      handleChangeParam("difficulty", newValue[0].toString());
     },
-    [createQueryString, pathname, router]
+    [handleChangeParam]
   );
   // Make sure the difficulty level is valid i.e. between 1 and 5
   useEffect(() => {

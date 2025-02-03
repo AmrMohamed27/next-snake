@@ -5,9 +5,10 @@ import {
   Auth,
   User,
   onAuthStateChanged,
+  browserLocalPersistence,
 } from "firebase/auth";
 import { getFirestore, Firestore } from "firebase/firestore";
-import { setPersistence, browserSessionPersistence } from "firebase/auth";
+import { setPersistence } from "firebase/auth";
 
 // Your Firebase configuration (from Firebase Console)
 const firebaseConfig = {
@@ -29,7 +30,7 @@ auth.useDeviceLanguage();
 const provider: GoogleAuthProvider = new GoogleAuthProvider();
 const db: Firestore = getFirestore(app);
 
-setPersistence(auth, browserSessionPersistence).catch((error) =>
+setPersistence(auth, browserLocalPersistence).catch((error) =>
   console.error("Persistence error:", error)
 );
 

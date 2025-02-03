@@ -46,3 +46,5 @@ export const difficultiesTitle = "difficulty";
 export const gameStartSrc = "media/game_start.mp3";
 export const gameOverSrc = "media/game_over.mp3";
 export const eatingSrc = "media/eating.mp3";
+
+export const muteText = "mute_sound_effects";
