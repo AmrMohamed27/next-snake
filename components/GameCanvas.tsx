@@ -4,13 +4,15 @@
 // TODO: Add sound effects
 
 import {
-  CANVAS_HEIGHT,
-  CANVAS_WIDTH,
   canvasFallbackText,
+  DESKTOP_CANVAS_HEIGHT,
+  DESKTOP_CANVAS_WIDTH,
   eatingSrc,
   gameOverSrc,
   gameOverText,
   gameStartSrc,
+  MOBILE_CANVAS_HEIGHT,
+  MOBILE_CANVAS_WIDTH,
   pauseButtonText,
   resetButtonText,
   restartButtonText,
@@ -28,6 +30,27 @@ import { useAuth } from "@/hooks/use-auth";
 import { useSearchParams } from "next/navigation";
 
 const GameCanvas = () => {
+  // Canvas width and height
+  const [canvasWidth, setCanvasWidth] = useState(
+    window.innerWidth > 768 ? DESKTOP_CANVAS_WIDTH : MOBILE_CANVAS_WIDTH
+  );
+  const [canvasHeight, setCanvasHeight] = useState(
+    window.innerWidth > 768 ? DESKTOP_CANVAS_HEIGHT : MOBILE_CANVAS_HEIGHT
+  );
+  useEffect(() => {
+    const resizeCanvas = () => {
+      setCanvasWidth(
+        window.innerWidth > 768 ? DESKTOP_CANVAS_WIDTH : MOBILE_CANVAS_WIDTH
+      );
+      setCanvasHeight(
+        window.innerWidth > 768 ? DESKTOP_CANVAS_HEIGHT : MOBILE_CANVAS_HEIGHT
+      );
+    };
+
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+    return () => window.removeEventListener("resize", resizeCanvas);
+  }, []);
   // current user
   const user = useAuth();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -94,21 +117,40 @@ const GameCanvas = () => {
         setDifficultyLevel(100);
     }
   }, [searchParams]);
-  // Toast
-  // const { toast } = useToast();
+  const [muted, setMuted] = useState<boolean>(false);
+  // Check if the mute parameter is in the URL query parameters
+  useEffect(() => {
+    setMuted(
+      searchParams.get("mute")
+        ? parseInt(searchParams.get("mute")!) === 1
+        : false
+    );
+  }, [searchParams]);
+  // Mute sound effects
+  useEffect(() => {
+    if (muted) {
+      if (gameStartSound.current) gameStartSound.current.muted = true;
+      if (gameOverSound.current) gameOverSound.current.muted = true;
+      if (eatSound.current) eatSound.current.muted = true;
+    } else {
+      if (gameStartSound.current) gameStartSound.current.muted = false;
+      if (gameOverSound.current) gameOverSound.current.muted = false;
+      if (eatSound.current) eatSound.current.muted = false;
+    }
+  }, [muted]);
   //   Start the game, function is wrapped in useCallback to prevent unnecessary re-renders in the useEffect hook that handles key presses
   const handleStartGame = useCallback(() => {
     setGameOver(false);
     setIsRunning(true);
     setIsPaused(false);
     setFood(
-      generateRandomSquare(CANVAS_WIDTH - gridSize, CANVAS_HEIGHT - gridSize)
+      generateRandomSquare(canvasWidth - gridSize, canvasHeight - gridSize)
     );
     setSnake(initialSnake);
     setDirection({ x: -gridSize, y: 0 });
     // Play game start sound
     gameStartSound.current?.play();
-  }, [initialSnake]);
+  }, [initialSnake, canvasHeight, canvasWidth]);
   //   Pause the game
   const handlePauseGame = () => {
     setIsPaused((prev) => !prev);
@@ -125,7 +167,7 @@ const GameCanvas = () => {
     setScore(0);
   };
 
-  //   Draw the grid
+  //   Draw everything
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -133,8 +175,8 @@ const GameCanvas = () => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    canvas.width = CANVAS_WIDTH;
-    canvas.height = CANVAS_HEIGHT;
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
 
     // Draw background
     const drawBackground = () => {
@@ -170,10 +212,7 @@ const GameCanvas = () => {
         eatSound.current?.play();
         // Generate new food
         setFood(
-          generateRandomSquare(
-            CANVAS_WIDTH - gridSize,
-            CANVAS_HEIGHT - gridSize
-          )
+          generateRandomSquare(canvasWidth - gridSize, canvasHeight - gridSize)
         );
 
         // Make the snake bigger
@@ -186,9 +225,9 @@ const GameCanvas = () => {
           //   Check if the snake has collided with the walls
           if (
             newHead.x < 0 ||
-            newHead.x >= CANVAS_WIDTH ||
+            newHead.x >= canvasWidth ||
             newHead.y < 0 ||
-            newHead.y >= CANVAS_HEIGHT
+            newHead.y >= canvasHeight
           ) {
             setGameOver(true);
             return prevSnake;
@@ -214,7 +253,7 @@ const GameCanvas = () => {
     drawGrid();
     drawSnake();
     drawFood();
-  }, [snake, food, direction]);
+  }, [snake, food, direction, canvasHeight, canvasWidth]);
 
   // Handle key presses to change direction
   useEffect(() => {
@@ -264,9 +303,9 @@ const GameCanvas = () => {
           //   Check if the snake has collided with itself or the walls
           if (
             newHead.x < 0 ||
-            newHead.x >= CANVAS_WIDTH ||
+            newHead.x >= canvasWidth ||
             newHead.y < 0 ||
-            newHead.y >= CANVAS_HEIGHT ||
+            newHead.y >= canvasHeight ||
             prevSnake.includes(newHead)
           ) {
             setGameOver(true);
@@ -282,7 +321,15 @@ const GameCanvas = () => {
       }, difficultyLevel);
       return () => clearInterval(interval);
     }
-  }, [direction, gameOver, isRunning, isPaused, difficultyLevel]);
+  }, [
+    direction,
+    gameOver,
+    isRunning,
+    isPaused,
+    difficultyLevel,
+    canvasHeight,
+    canvasWidth,
+  ]);
 
   // Handle game over
   useEffect(() => {

@@ -112,3 +112,16 @@
 .main-padding-x {
   @apply px-4 sm:px-6 md:px-16 lg:px-32;
 }
+
+canvas {
+  width: 400px;
+  height: 400px;
+}
+
+@media (max-width: 768px) {
+  /* Adjust for mobile screens */
+  canvas {
+    width: 260px;
+    height: 260px;
+  }
+}

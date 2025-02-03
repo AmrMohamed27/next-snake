@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn(gugi.className, "antialiased")}>
+      <body className={cn(gugi.className, "antialiased w-screen")}>
         <Header />
         {children}
         <Toaster />
