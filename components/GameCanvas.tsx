@@ -1,7 +1,4 @@
 "use client";
-//TODO: Nintendo-Style graphics
-// TODO: Add difficulty levels
-// TODO: Add sound effects
 
 import {
   canvasFallbackText,
@@ -31,12 +28,8 @@ import { useSearchParams } from "next/navigation";
 
 const GameCanvas = () => {
   // Canvas width and height
-  const [canvasWidth, setCanvasWidth] = useState(
-    window.innerWidth > 768 ? DESKTOP_CANVAS_WIDTH : MOBILE_CANVAS_WIDTH
-  );
-  const [canvasHeight, setCanvasHeight] = useState(
-    window.innerWidth > 768 ? DESKTOP_CANVAS_HEIGHT : MOBILE_CANVAS_HEIGHT
-  );
+  const [canvasWidth, setCanvasWidth] = useState(MOBILE_CANVAS_WIDTH);
+  const [canvasHeight, setCanvasHeight] = useState(MOBILE_CANVAS_HEIGHT);
   useEffect(() => {
     const resizeCanvas = () => {
       setCanvasWidth(
@@ -346,7 +339,7 @@ const GameCanvas = () => {
   }, [score, user, gameOver, isRunning]);
 
   return (
-    <div className="flex flex-col items-center justify-center gap-8">
+    <div className="flex flex-col items-center justify-center gap-8 -order-1 lg:order-0">
       <canvas ref={canvasRef} className="border border-theme-yellow">
         {canvasFallbackText}
       </canvas>

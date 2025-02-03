@@ -49,3 +49,6 @@ export const gameOverSrc = "media/game_over.mp3";
 export const eatingSrc = "media/eating.mp3";
 
 export const muteText = "mute_sound_effects";
+
+export const notFoundText = "error_404 - page_not_found";
+export const notFoundLinkText = "go_back_to_homepage";

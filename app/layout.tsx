@@ -24,8 +24,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(gugi.className, "antialiased w-screen")}>
-        <Header />
-        {children}
+        <div className="w-full min-h-screen flex flex-col">
+          <Header />
+          {children}
+        </div>
         <Toaster />
       </body>
     </html>
