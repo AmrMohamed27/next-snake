@@ -93,13 +93,13 @@ const GameCanvas = () => {
     const initialDifficulty = searchParams.get("difficulty") ?? "1";
     switch (initialDifficulty) {
       case "1":
-        setDifficultyLevel(100);
+        setDifficultyLevel(150);
         break;
       case "2":
-        setDifficultyLevel(70);
+        setDifficultyLevel(100);
         break;
       case "3":
-        setDifficultyLevel(50);
+        setDifficultyLevel(75);
         break;
       case "4":
         setDifficultyLevel(40);
