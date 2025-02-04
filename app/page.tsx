@@ -13,10 +13,10 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center gap-8 main-padding-x min-h-[calc(100vh-150px)]">
       {/* Header */}
-      <h1 className="text-xl md:text-3xl text-center">{`${homeHeader}, ${toSnakeCase(
+      <h1 className="text-xl md:text-3xl text-center hidden sm:block">{`${homeHeader}, ${toSnakeCase(
         user?.displayName ?? "dear_visitor"
       )}!`}</h1>
-      <h2 className="text-sm md:text-base">{homeSubheader}</h2>
+      <h2 className="text-sm md:text-base hidden sm:block">{homeSubheader}</h2>
       {/* Game Area */}
       <div className="w-full flex flex-col lg:flex-row items-center lg:items-start lg:justify-between gap-4 lg:gap-0">
         {/* Difficulty Levels */}

@@ -25,6 +25,7 @@ import { saveHighScore } from "@/actions/highscore";
 import { useAuth } from "@/hooks/use-auth";
 // import { useToast } from "@/hooks/use-toast";
 import { useSearchParams } from "next/navigation";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp } from "lucide-react";
 
 const GameCanvas = () => {
   // Canvas width and height
@@ -248,6 +249,24 @@ const GameCanvas = () => {
     drawFood();
   }, [snake, food, direction, canvasHeight, canvasWidth]);
 
+  const handleMovement = useCallback(
+    (movementDirection: "up" | "down" | "left" | "right") => {
+      if (movementDirection === "up") {
+        if (direction.y === 0) setDirection({ x: 0, y: -gridSize });
+        if (!isRunning) handleStartGame();
+      } else if (movementDirection === "down") {
+        if (direction.y === 0) setDirection({ x: 0, y: gridSize });
+        if (!isRunning) handleStartGame();
+      } else if (movementDirection === "left") {
+        if (direction.x === 0) setDirection({ x: -gridSize, y: 0 });
+        if (!isRunning) handleStartGame();
+      } else if (movementDirection === "right") {
+        if (direction.x === 0) setDirection({ x: gridSize, y: 0 });
+        if (!isRunning) handleStartGame();
+      }
+    },
+    [direction, isRunning, handleStartGame]
+  );
   // Handle key presses to change direction
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -255,34 +274,29 @@ const GameCanvas = () => {
         case "ArrowUp":
         case "w":
         case "W":
-          if (direction.y === 0) setDirection({ x: 0, y: -gridSize });
-          if (!isRunning) handleStartGame();
+          handleMovement("up");
           break;
         case "ArrowDown":
         case "s":
         case "S":
-          if (direction.y === 0) setDirection({ x: 0, y: gridSize });
-          if (!isRunning) handleStartGame();
+          handleMovement("down");
           break;
         case "ArrowLeft":
         case "a":
         case "A":
-          if (direction.x === 0) setDirection({ x: -gridSize, y: 0 });
-          if (!isRunning) handleStartGame();
+          handleMovement("left");
           break;
         case "ArrowRight":
         case "d":
         case "D":
-          if (direction.x === 0) setDirection({ x: gridSize, y: 0 });
-          if (!isRunning) handleStartGame();
+          handleMovement("right");
           break;
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [direction, isRunning, handleStartGame]);
-
+  }, [handleMovement]);
   //   Move the snake
   useEffect(() => {
     if (!gameOver && isRunning && !isPaused) {
@@ -339,13 +353,50 @@ const GameCanvas = () => {
   }, [score, user, gameOver, isRunning]);
 
   return (
-    <div className="flex flex-col items-center justify-center gap-8 -order-1 lg:order-0">
+    <div className="flex flex-col items-center justify-center gap-2 -order-1 lg:order-0">
+      {/* Canvas */}
       <canvas ref={canvasRef} className="border border-theme-yellow">
         {canvasFallbackText}
       </canvas>
+
+      {/* Mobile Controls */}
+      <div className="flex sm:hidden flex-col gap-4 items-center">
+        <Button
+          onClick={() => handleMovement("up")}
+          size={"icon"}
+          className="opacity-40 bg-white text-black"
+        >
+          <ArrowUp />
+        </Button>
+        <div className="flex flex-row gap-16">
+          <Button
+            onClick={() => handleMovement("left")}
+            size={"icon"}
+            className="opacity-40 bg-white text-black"
+          >
+            <ArrowLeft />
+          </Button>
+          <Button
+            onClick={() => handleMovement("right")}
+            size={"icon"}
+            className="opacity-40 bg-white text-black"
+          >
+            <ArrowRight />
+          </Button>
+        </div>
+        <Button
+          onClick={() => handleMovement("down")}
+          size={"icon"}
+          className="opacity-40 bg-white text-black"
+        >
+          <ArrowDown />
+        </Button>
+      </div>
+      {/* Score */}
       <div className="flex flex-row gap-4 items-center">
         <span>{`${scoreText}: ${score}`}</span>
       </div>
+      {/* Buttons */}
       <div className="flex flex-row items-center gap-4">
         <Button
           className="bg-theme-green hover:bg-theme-green/70 cursor-pointer"
